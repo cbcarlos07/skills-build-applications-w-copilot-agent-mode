@@ -1,11 +1,16 @@
+import { getJson } from '../api/client.js';
 import { CapabilityCard } from './CapabilityCard.js';
+
+function loadActivities() {
+  return getJson<unknown>('/api/activities');
+}
 
 export default function Activities() {
   return (
     <CapabilityCard
       title="Activities"
       description="Track student activity minutes and points."
-      endpoint="/api/activities"
+      loadData={loadActivities}
       emptyText="No activities"
       getItems={(payload) => Array.isArray((payload as { activities?: unknown[] })?.activities) ? (payload as { activities: unknown[] }).activities : []}
       renderItem={(item) => (

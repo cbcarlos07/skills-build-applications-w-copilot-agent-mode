@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react';
-import { getJson } from '../api/client.js';
-
 type Props = {
   title: string;
   description: string;
-  endpoint: string;
+  loadData: () => Promise<unknown>;
   emptyText: string;
   getItems: (payload: unknown) => unknown[];
   renderItem: (item: Record<string, unknown>, index: number) => React.ReactNode;
 };
 
-export function CapabilityCard({ title, description, endpoint, emptyText, getItems, renderItem }: Props) {
+export function CapabilityCard({ title, description, loadData, emptyText, getItems, renderItem }: Props) {
   const [items, setItems] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +19,7 @@ export function CapabilityCard({ title, description, endpoint, emptyText, getIte
     setLoading(true);
     setError(null);
 
-    getJson<unknown>(endpoint)
+    loadData()
       .then((payload) => {
         if (cancelled) return;
         setItems(getItems(payload));
@@ -36,7 +34,7 @@ export function CapabilityCard({ title, description, endpoint, emptyText, getIte
     return () => {
       cancelled = true;
     };
-  }, [endpoint, getItems]);
+  }, [loadData, getItems]);
 
   if (loading) {
     return (
